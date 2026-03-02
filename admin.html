@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>問答小學堂 — 管理後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
+:root{--p:#4F6AF0;--pd:#3951D8;--s:#FF6B6B;--a:#FFD93D;--a2:#6BCB77;--bg:#1A1F3A;--bg2:#232848;--card:#2A3060;--card2:#323870;--t:#EEF2FF;--tm:#9BA8D4;--bd:#3D4580;--ok:#6BCB77;--ng:#FF6B6B;--r:16px;--rs:10px;--sh:0 8px 32px rgba(0,0,0,.3);}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+
+/* NAV */
+nav{background:rgba(26,31,58,.95);backdrop-filter:blur(20px);border-bottom:2px solid var(--bd);position:sticky;top:0;z-index:100;padding:0 24px}
+.nav-in{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--p),#8B5CF6);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(79,106,240,.4)}
+.nav-ttl{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--t)}
+.nav-sub{font-size:11px;color:var(--tm)}
+.nav-acts{display:flex;gap:8px;align-items:center}
+.nav-badge{background:linear-gradient(135deg,#FF6B6B,#FF3D6B);color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px}
+
+/* LAYOUT */
+.admin-wrap{max-width:1200px;margin:0 auto;padding:28px 24px;display:grid;grid-template-columns:220px 1fr;gap:24px;min-height:calc(100vh - 64px)}
+@media(max-width:768px){.admin-wrap{grid-template-columns:1fr;padding:16px}}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:6px}
+.sidebar-section{font-size:10px;font-weight:800;color:var(--tm);letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;margin-top:12px;margin-bottom:2px}
+.sidebar-section:first-child{margin-top:0}
+.sitem{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);cursor:pointer;font-size:13px;font-weight:700;color:var(--tm);transition:all .18s;border:none;background:none;width:100%;text-align:left}
+.sitem:hover{background:var(--card2);color:var(--t)}
+.sitem.active{background:linear-gradient(135deg,rgba(79,106,240,.25),rgba(139,92,246,.15));color:#fff;border:1.5px solid rgba(79,106,240,.4)}
+.sitem i{width:18px;text-align:center}
+.sitem .badge{margin-left:auto;background:var(--p);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px}
+
+/* MAIN CONTENT */
+.content{min-width:0}
+.panel{display:none}.panel.active{display:block;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.panel-ttl{font-family:'Baloo 2',cursive;font-size:24px;font-weight:800;margin-bottom:6px}
+.panel-sub{font-size:13px;color:var(--tm);font-weight:600;margin-bottom:24px}
+
+/* CARD */
+.card{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bd);box-shadow:var(--sh);padding:22px;margin-bottom:18px}
+.card-ttl{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--t)}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--card);border:1.5px solid var(--bd);border-radius:var(--r);padding:18px;text-align:center}
+.stat-ic{font-size:26px;margin-bottom:8px}
+.stat-lbl{font-size:11px;font-weight:700;color:var(--tm);margin-bottom:4px}
+.stat-val{font-family:'Baloo 2',cursive;font-size:32px;font-weight:800}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:var(--rs);border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;transition:all .22s}
+.btn:active{transform:scale(.97)}
+.bp{background:linear-gradient(135deg,var(--p),#8B5CF6);color:#fff;box-shadow:0 5px 16px rgba(79,106,240,.4)}.bp:hover{transform:translateY(-2px)}
+.bs{background:var(--card2);color:var(--tm);border:1.5px solid var(--bd)}.bs:hover{color:var(--t);border-color:var(--p)}
+.bg2{background:linear-gradient(135deg,var(--a2),#45B660);color:#fff}.bg2:hover{transform:translateY(-2px)}
+.br{background:linear-gradient(135deg,var(--s),#FF3D6B);color:#fff}.br:hover{transform:translateY(-2px)}
+.ba{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff}.ba:hover{transform:translateY(-2px)}
+.bsm{padding:7px 14px;font-size:12px;border-radius:8px}
+.bdis{opacity:.4;pointer-events:none}
+
+/* FORM */
+.fl{display:block;font-size:12px;font-weight:700;color:var(--tm);margin-bottom:5px}
+.fi{width:100%;padding:10px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--t);background:var(--bg2);outline:none;transition:all .18s}
+.fi:focus{border-color:var(--p);background:var(--card2)}
+.fg{margin-bottom:12px}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* LOGIN */
+.login-wrap{max-width:380px;margin:80px auto;text-align:center}
+.login-ic{width:72px;height:72px;background:linear-gradient(135deg,var(--p),#8B5CF6);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;box-shadow:0 8px 24px rgba(79,106,240,.4)}
+.login-ttl{font-family:'Baloo 2',cursive;font-size:26px;font-weight:800;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--tm);font-weight:600;margin-bottom:28px}
+
+/* TOGGLE */
+.tog{width:44px;height:24px;border-radius:12px;background:var(--bd);cursor:pointer;position:relative;transition:all .22s;border:none}
+.tog::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:all .22s;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.tog.on{background:var(--p)}.tog.on::after{left:23px}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--bd)}
+.srow:last-child{border-bottom:none}
+.srl{font-size:13px;font-weight:700;color:var(--t)}.srd{font-size:11px;color:var(--tm);font-weight:600;margin-top:2px}
+
+/* LOTTERY */
+.draw-area{background:linear-gradient(135deg,rgba(79,106,240,.15),rgba(139,92,246,.1));border:2px dashed var(--p);border-radius:var(--r);padding:24px;text-align:center;margin-bottom:18px}
+.draw-slot{font-family:'Baloo 2',cursive;font-size:38px;font-weight:800;color:var(--p);min-height:58px;display:flex;align-items:center;justify-content:center;letter-spacing:2px}
+.draw-slot.rolling{animation:roll .09s steps(1) infinite}
+@keyframes roll{from{opacity:.5;transform:scale(.96)}to{opacity:1;transform:scale(1.04)}}
+.pool-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;margin-bottom:16px}
+.pool-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg2);border:1.5px solid var(--bd);border-radius:var(--rs);transition:all .2s}
+.pool-item.winner{background:linear-gradient(135deg,rgba(255,217,61,.12),rgba(255,196,0,.08));border-color:var(--a);animation:wp .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes wp{from{transform:scale(.95)}to{transform:scale(1)}}
+.pnum{width:28px;height:28px;background:linear-gradient(135deg,var(--p),#8B5CF6);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-size:12px;font-weight:800;color:#fff;min-width:28px}
+.pname{font-size:13px;font-weight:800;color:var(--t)}.pcls{font-size:11px;color:var(--tm);font-weight:600}
+.ptime{font-size:11px;color:var(--tm);white-space:nowrap}
+.pe{text-align:center;padding:32px;color:var(--tm);font-weight:700;font-size:13px}
+
+/* PRIZE */
+.prize-sel-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg2);border:1.5px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:all .18s;margin-bottom:8px}
+.prize-sel-item:hover{border-color:var(--p)}
+.prize-sel-item.active{border-color:var(--p);background:rgba(79,106,240,.12)}
+.prize-sel-item input[type=radio]{accent-color:var(--p);width:16px;height:16px}
+.prize-list-item{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg2);border:1.5px solid var(--bd);border-radius:var(--rs);margin-bottom:8px;transition:all .18s}
+.prize-list-item:hover{border-color:var(--p)}
+.prize-em{font-size:26px;min-width:34px;text-align:center}
+.prize-info{flex:1}
+.prize-name{font-size:14px;font-weight:800;color:var(--t)}
+.prize-meta{font-size:11px;color:var(--tm);font-weight:600;margin-top:2px}
+.prize-remain{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;min-width:38px;text-align:right}
+.prize-editor{background:rgba(79,106,240,.08);border:1.5px solid var(--p);border-radius:var(--rs);padding:18px;margin-top:12px}
+
+/* QUESTION EDITOR */
+.q-list{display:flex;flex-direction:column;gap:10px}
+.q-item{background:var(--bg2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:14px;transition:all .18s}
+.q-item:hover{border-color:var(--p)}
+.q-item-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.q-num{font-size:11px;font-weight:800;color:var(--p);background:rgba(79,106,240,.15);padding:2px 8px;border-radius:6px}
+.q-acts{display:flex;gap:5px}
+.q-text{font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px}
+.q-meta{font-size:11px;color:var(--tm);font-weight:600}
+.q-editor{background:rgba(79,106,240,.07);border:1.5px solid var(--p);border-radius:var(--rs);padding:18px;margin-top:14px}
+.q-ed-ttl{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.opt-ed-list{display:flex;flex-direction:column;gap:7px;margin-top:8px}
+.opt-ed-row{display:flex;align-items:center;gap:6px}
+.opt-ed-row .fi{flex:1;padding:8px 11px}
+.oct{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--bd);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .18s;color:var(--tm)}
+.oct.on{border-color:var(--ok);background:rgba(107,203,119,.15);color:var(--ok)}
+.odel{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--bd);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .18s;color:var(--tm)}
+.odel:hover{border-color:var(--ng);background:rgba(255,107,107,.12);color:var(--ng)}
+.si2{width:100%;padding:10px 13px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;background:var(--bg2);color:var(--t);outline:none;cursor:pointer;transition:all .18s}
+.si2:focus{border-color:var(--p)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th,.tbl td{padding:10px 13px;text-align:left;border-bottom:1px solid var(--bd);font-size:12px}
+.tbl th{font-weight:800;color:var(--tm);background:var(--bg2);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.tbl td{font-weight:700;color:var(--t)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--card2)}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:800}
+.bok{background:rgba(107,203,119,.15);color:var(--ok)}.bng{background:rgba(255,107,107,.15);color:var(--ng)}.bwn{background:rgba(255,217,61,.15);color:#F59E0B}.bbl{background:rgba(79,106,240,.15);color:var(--p)}
+
+/* EXPORT */
+.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:600px){.export-grid{grid-template-columns:1fr}}
+.export-card{background:var(--bg2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:16px;text-align:center;cursor:pointer;transition:all .2s;border:none}
+.export-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.export-card-ic{font-size:28px;margin-bottom:8px}
+.export-card-lbl{font-size:13px;font-weight:800;color:var(--t)}
+.export-card-sub{font-size:11px;color:var(--tm);font-weight:600;margin-top:3px}
+
+/* WINNER HISTORY */
+.winner-item{display:flex;align-items:center;gap:12px;padding:12px 15px;background:rgba(255,217,61,.06);border:1.5px solid rgba(255,217,61,.25);border-radius:var(--rs);margin-bottom:8px}
+
+/* MISC */
+.hid{display:none!important}
+.fc{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mt2{margin-top:8px}.mt3{margin-top:12px}.mt4{margin-top:16px}.mb2{margin-bottom:8px}.mb3{margin-bottom:12px}.mb4{margin-bottom:16px}
+
+/* TOAST */
+.toastc{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px}
+.toast{padding:12px 16px;border-radius:var(--rs);font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:fi .32s cubic-bezier(.34,1.56,.64,1);max-width:300px}
+.tok{background:var(--ok);color:#fff}.tng{background:var(--ng);color:#fff}.ti{background:var(--p);color:#fff}
+.cc{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden}
+.cp{position:absolute;border-radius:3px;animation:cf linear forwards}
+@keyframes cf{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* CONFIRM DIALOG */
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:14px}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bd);padding:28px;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.confirm-ttl{font-size:17px;font-weight:800;margin-bottom:8px}
+.confirm-msg{font-size:13px;color:var(--tm);font-weight:600;margin-bottom:22px}
+.confirm-acts{display:flex;gap:10px;justify-content:center}
+
+/* Real-time indicator */
+.live-dot{width:8px;height:8px;background:var(--ok);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <nav>
+    <div class="nav-in">
+      <div class="nav-brand">
+        <div class="nav-logo">🛡️</div>
+        <div><div class="nav-ttl">問答小學堂</div><div class="nav-sub">管理後台</div></div>
+      </div>
+      <a href="index.html" style="color:var(--tm);font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px"><i class="fas fa-arrow-left"></i> 返回前端</a>
+    </div>
+  </nav>
+  <div class="login-wrap">
+    <div class="login-ic">🛡️</div>
+    <div class="login-ttl">管理員登入</div>
+    <div class="login-sub">請輸入管理員密碼以進入後台</div>
+    <div class="fg"><input class="fi" type="password" id="loginPw" placeholder="輸入密碼" style="font-size:16px;padding:14px 18px"></div>
+    <button class="btn bp" id="loginBtn" style="width:100%;padding:14px;font-size:15px;margin-top:6px"><i class="fas fa-unlock"></i> 登入後台</button>
+    <p class="hid" id="loginErr" style="color:var(--ng);font-size:13px;font-weight:700;margin-top:10px"><i class="fas fa-exclamation-circle"></i> 密碼錯誤，請重試</p>
+    <p style="font-size:12px;color:var(--tm);font-weight:600;margin-top:18px">預設密碼：1234</p>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminScreen" class="hid">
+  <nav>
+    <div class="nav-in">
+      <div class="nav-brand">
+        <div class="nav-logo">🛡️</div>
+        <div><div class="nav-ttl">問答小學堂 管理後台</div><div class="nav-sub">Admin Dashboard</div></div>
+      </div>
+      <div class="nav-acts">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tm);font-weight:700">
+          <div class="live-dot"></div>即時資料
+        </div>
+        <span class="nav-badge">管理員</span>
+        <a href="index.html" style="color:var(--tm);font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--bd);transition:all .18s" onmouseover="this.style.color='#fff';this.style.borderColor='var(--p)'" onmouseout="this.style.color='var(--tm)';this.style.borderColor='var(--bd)'"><i class="fas fa-external-link-alt"></i> 前端</a>
+        <button class="btn bs bsm" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 登出</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-wrap">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">抽獎管理</div>
+      <button class="sitem active" data-panel="draw"><i class="fas fa-random"></i> 抽獎操作 <span class="badge" id="sb-pool-cnt">0</span></button>
+      <button class="sitem" data-panel="prizes"><i class="fas fa-gift"></i> 獎項設定</button>
+      <button class="sitem" data-panel="export"><i class="fas fa-file-export"></i> 匯出資料</button>
+
+      <div class="sidebar-section">內容管理</div>
+      <button class="sitem" data-panel="questions"><i class="fas fa-list-check"></i> 題目管理</button>
+      <button class="sitem" data-panel="settings"><i class="fas fa-cog"></i> 系統設定</button>
+
+      <div class="sidebar-section">數據分析</div>
+      <button class="sitem" data-panel="records"><i class="fas fa-chart-bar"></i> 參與記錄</button>
+      <button class="sitem" data-panel="winners"><i class="fas fa-trophy"></i> 得獎記錄</button>
+
+      <div style="margin-top:auto;padding-top:18px;border-top:1px solid var(--bd)">
+        <div style="font-size:11px;color:var(--tm);font-weight:600;padding:8px 12px;line-height:1.6">
+          共享儲存：localStorage<br>
+          前後台自動同步
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DRAW PANEL -->
+      <div class="panel active" id="panel-draw">
+        <div class="panel-ttl">🎰 抽獎操作</div>
+        <div class="panel-sub">從登錄名單中選擇獎項並進行抽獎</div>
+
+        <!-- Stats row -->
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-ic">👥</div><div class="stat-lbl">抽獎名單</div><div class="stat-val" id="stat-pool" style="color:var(--p)">0</div></div>
+          <div class="stat-card"><div class="stat-ic">🏆</div><div class="stat-lbl">已抽獎次數</div><div class="stat-val" id="stat-drawn" style="color:var(--a)">0</div></div>
+          <div class="stat-card"><div class="stat-ic">🎁</div><div class="stat-lbl">獎項種類</div><div class="stat-val" id="stat-prizes" style="color:var(--a2)">0</div></div>
+          <div class="stat-card"><div class="stat-ic">📝</div><div class="stat-lbl">總作答人次</div><div class="stat-val" id="stat-records" style="color:var(--s)">0</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <!-- Prize selector -->
+          <div class="card">
+            <div class="card-ttl"><i class="fas fa-gift" style="color:var(--a)"></i> 選擇獎項</div>
+            <div id="prizeSelList"></div>
+          </div>
+          <!-- Draw area -->
+          <div>
+            <div class="draw-area">
+              <div style="font-size:11px;font-weight:700;color:var(--tm);margin-bottom:5px">抽獎獎項</div>
+              <div style="font-size:13px;font-weight:800;color:var(--p);margin-bottom:6px;min-height:18px" id="drawPrizeLabel">—</div>
+              <div class="draw-slot" id="drawSlot">— — —</div>
+              <div style="font-size:14px;font-weight:700;color:var(--tm);margin-top:5px;min-height:18px" id="drawCls"></div>
+            </div>
+            <div class="fc" style="justify-content:flex-start;gap:10px;margin-bottom:16px">
+              <button class="btn br" id="doDrawBtn" style="flex:1"><i class="fas fa-random"></i> 開始抽獎</button>
+              <button class="btn bs bsm" id="clearPoolBtn"><i class="fas fa-trash"></i> 清空</button>
+            </div>
+            <button class="btn ba bsm" onclick="resetAllPrizeDrawn()" style="width:100%;margin-bottom:14px"><i class="fas fa-redo"></i> 重置所有獎項已抽數量</button>
+          </div>
+        </div>
+
+        <!-- Pool list -->
+        <div class="card">
+          <div class="card-ttl" style="justify-content:space-between">
+            <span><i class="fas fa-users" style="color:var(--p)"></i> 抽獎名單</span>
+            <span class="bdg bbl" id="poolCntBdg">0 人</span>
+          </div>
+          <div class="pool-list" id="poolList"></div>
+        </div>
+      </div>
+
+      <!-- PRIZES PANEL -->
+      <div class="panel" id="panel-prizes">
+        <div class="panel-ttl">🎁 獎項設定</div>
+        <div class="panel-sub">設定各獎項名稱、圖示及數量</div>
+        <div class="card">
+          <div class="card-ttl" style="justify-content:space-between">
+            <span><i class="fas fa-gift" style="color:var(--a)"></i> 獎項列表</span>
+            <button class="btn bp bsm" id="addPrizeBtn"><i class="fas fa-plus"></i> 新增獎項</button>
+          </div>
+          <div id="prizeListEl"></div>
+          <!-- Editor -->
+          <div class="prize-editor hid" id="prizeEditor">
+            <div style="font-size:14px;font-weight:800;margin-bottom:13px;color:var(--p)" id="prizeEdTitle">新增獎項</div>
+            <div class="fgrid3">
+              <div class="fg"><label class="fl">獎項名稱</label><input class="fi" id="peN" type="text" placeholder="例：一等獎"></div>
+              <div class="fg"><label class="fl">Emoji 圖示</label><input class="fi" id="peE" type="text" placeholder="🏆"></div>
+              <div class="fg"><label class="fl">數量</label><input class="fi" id="peQ" type="number" min="1" max="999" placeholder="1"></div>
+            </div>
+            <div class="fc">
+              <button class="btn bg2 bsm" id="savePrizeBtn"><i class="fas fa-check"></i> 儲存</button>
+              <button class="btn bs bsm" id="cancelPrizeBtn">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT PANEL -->
+      <div class="panel" id="panel-export">
+        <div class="panel-ttl">📤 匯出資料</div>
+        <div class="panel-sub">將各類資料匯出為 CSV 檔案（UTF-8 with BOM，支援 Excel 直接開啟）</div>
+        <div class="export-grid">
+          <button class="export-card" onclick="exportCSV('pool')" style="background:var(--card2)">
+            <div class="export-card-ic">📋</div>
+            <div class="export-card-lbl">抽獎名單</div>
+            <div class="export-card-sub" id="exp-pool-cnt">0 人</div>
+          </button>
+          <button class="export-card" onclick="exportCSV('winners')" style="background:var(--card2)">
+            <div class="export-card-ic">🏆</div>
+            <div class="export-card-lbl">得獎名單</div>
+            <div class="export-card-sub" id="exp-winner-cnt">0 筆</div>
+          </button>
+          <button class="export-card" onclick="exportCSV('records')" style="background:var(--card2)">
+            <div class="export-card-ic">📊</div>
+            <div class="export-card-lbl">答題記錄</div>
+            <div class="export-card-sub" id="exp-rec-cnt">0 筆</div>
+          </button>
+        </div>
+        <button class="btn bp" onclick="exportCSV('all')" style="width:100%;padding:14px;font-size:15px;margin-bottom:18px"><i class="fas fa-download"></i> 一次匯出全部（3 個檔案）</button>
+        <div class="card">
+          <div class="card-ttl"><i class="fas fa-info-circle" style="color:var(--p)"></i> 匯出說明</div>
+          <div style="font-size:13px;color:var(--tm);font-weight:600;line-height:1.8">
+            • CSV 使用 UTF-8 BOM 編碼，在 Excel、Numbers 開啟中文不會亂碼<br>
+            • 抽獎名單：序號、姓名、班級、登錄時間<br>
+            • 得獎名單：序號、姓名、班級、獎項、抽獎時間<br>
+            • 答題記錄：序號、時間、總題數、答對題數、正確率、是否登錄
+          </div>
+        </div>
+      </div>
+
+      <!-- QUESTIONS PANEL -->
+      <div class="panel" id="panel-questions">
+        <div class="panel-ttl">📝 題目管理</div>
+        <div class="panel-sub">新增、編輯、刪除答題題目</div>
+        <div class="card">
+          <div class="card-ttl" style="justify-content:space-between">
+            <span><i class="fas fa-list-check" style="color:var(--p)"></i> 題目列表</span>
+            <button class="btn bp bsm" id="addQBtn"><i class="fas fa-plus"></i> 新增題目</button>
+          </div>
+          <div class="q-list" id="qListEl"></div>
+          <div class="q-editor hid" id="qEditor">
+            <div class="q-ed-ttl"><i class="fas fa-edit" style="color:var(--p)"></i><span id="edTitle">新增題目</span></div>
+            <div class="fg"><label class="fl">題目類型</label><select class="si2" id="edType"><option value="single">單選題</option><option value="multi">多選題</option><option value="text">填空題</option></select></div>
+            <div class="fg"><label class="fl">題目內容</label><input class="fi" id="edQ" type="text" placeholder="請輸入題目內容"></div>
+            <div id="edOptsSection">
+              <label class="fl" style="margin-bottom:7px">選項（點 ✓ 設為正確答案）</label>
+              <div class="opt-ed-list" id="optEdList"></div>
+              <button class="btn bs bsm" id="addOptBtn" style="margin-top:8px"><i class="fas fa-plus"></i> 新增選項</button>
+            </div>
+            <div class="hid" id="edTxtSec">
+              <div class="fg"><label class="fl">正確答案（多個用逗號分隔）</label><input class="fi" id="edTxtAns" type="text" placeholder="例：7,七"></div>
+            </div>
+            <div class="fc mt3" style="justify-content:flex-end">
+              <button class="btn bs bsm" id="cancelEdBtn">取消</button>
+              <button class="btn bg2 bsm" id="saveQBtn"><i class="fas fa-check"></i> 儲存</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PANEL -->
+      <div class="panel" id="panel-settings">
+        <div class="panel-ttl">⚙️ 系統設定</div>
+        <div class="panel-sub">調整前端頁面文字、班級選項、答題行為</div>
+        <div class="card">
+          <div class="card-ttl"><i class="fas fa-pen-fancy" style="color:var(--p)"></i> 頁面文字</div>
+          <div class="fgrid2">
+            <div class="fg"><label class="fl">主標題</label><input class="fi" id="stTitle" type="text"></div>
+            <div class="fg"><label class="fl">副標題說明</label><input class="fi" id="stDesc" type="text"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-ttl"><i class="fas fa-chalkboard-teacher" style="color:var(--a2)"></i> 班級設定</div>
+          <div class="fg"><label class="fl">班級列表（逗號分隔）</label><input class="fi" id="stClasses" type="text" placeholder="一年甲班,一年乙班,二年甲班"></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl"><i class="fas fa-sliders" style="color:var(--a)"></i> 答題行為</div>
+          <div class="srow"><div><div class="srl">顯示即時答題反饋</div><div class="srd">答題後立即顯示正確/錯誤提示</div></div><button class="tog on" id="togFb"></button></div>
+          <div class="srow"><div><div class="srl">題目順序隨機</div><div class="srd">每次答題隨機排列題目順序</div></div><button class="tog on" id="togRandQ"></button></div>
+          <div class="srow"><div><div class="srl">選項順序隨機</div><div class="srd">每題選項隨機排列（填空題不影響）</div></div><button class="tog on" id="togRandO"></button></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl"><i class="fas fa-lock" style="color:var(--s)"></i> 安全設定</div>
+          <div class="fgrid2">
+            <div class="fg"><label class="fl">新密碼</label><input class="fi" id="newPw" type="password" placeholder="輸入新密碼"></div>
+            <div class="fg"><label class="fl">確認密碼</label><input class="fi" id="cfmPw" type="password" placeholder="再次輸入"></div>
+          </div>
+          <button class="btn bs bsm" id="savePwBtn"><i class="fas fa-key"></i> 更新密碼</button>
+        </div>
+        <button class="btn bg2" id="saveStBtn" style="width:100%;padding:14px;font-size:15px"><i class="fas fa-save"></i> 儲存所有設定</button>
+
+        <!-- Google Sheets -->
+        <div class="card" style="margin-top:18px;border-color:rgba(52,168,83,.4)">
+          <div class="card-ttl"><i class="fab fa-google" style="color:#34A853"></i> Google 試算表串接</div>
+          <div class="fg">
+            <label class="fl">Apps Script Web App URL</label>
+            <input class="fi" id="gasUrl" type="text" placeholder="https://script.google.com/macros/s/...../exec">
+          </div>
+          <div class="fc" style="justify-content:flex-start;gap:10px">
+            <button class="btn bg2 bsm" id="saveGasBtn"><i class="fas fa-save"></i> 儲存 URL</button>
+            <button class="btn bs bsm" id="testGasBtn"><i class="fas fa-plug"></i> 測試連線</button>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:var(--tm);font-weight:600;line-height:1.8">
+            ✅ 儲存後：學生登錄 → 自動寫入「抽獎名單」工作表<br>
+            ✅ 答題完成 → 自動寫入「答題記錄」工作表<br>
+            ✅ 管理員抽獎 → 自動寫入「得獎名單」工作表
+          </div>
+        </div>
+      </div>
+
+      <!-- RECORDS PANEL -->
+      <div class="panel" id="panel-records">
+        <div class="panel-ttl">📊 參與記錄</div>
+        <div class="panel-sub">所有學生的答題記錄與統計</div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-ic">📝</div><div class="stat-lbl">總作答人次</div><div class="stat-val" id="stTotal" style="color:var(--p)">0</div></div>
+          <div class="stat-card"><div class="stat-ic">✅</div><div class="stat-lbl">全部答對</div><div class="stat-val" id="stOk" style="color:var(--ok)">0</div></div>
+          <div class="stat-card"><div class="stat-ic">🎫</div><div class="stat-lbl">已登錄抽獎</div><div class="stat-val" id="stReg" style="color:var(--a)">0</div></div>
+          <div class="stat-card"><div class="stat-ic">📈</div><div class="stat-lbl">平均正確率</div><div class="stat-val" id="stAvg" style="color:var(--s)">0%</div></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl" style="justify-content:space-between">
+            <span><i class="fas fa-table" style="color:var(--p)"></i> 記錄明細</span>
+            <div class="fc">
+              <button class="btn bg2 bsm" onclick="exportCSV('records')"><i class="fas fa-download"></i> 匯出 CSV</button>
+              <button class="btn bs bsm" id="clearRecsBtn"><i class="fas fa-trash"></i> 清除</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>#</th><th>時間</th><th>總題數</th><th>答對</th><th>正確率</th><th>登錄狀態</th></tr></thead>
+              <tbody id="recTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- WINNERS PANEL -->
+      <div class="panel" id="panel-winners">
+        <div class="panel-ttl">🏆 得獎記錄</div>
+        <div class="panel-sub">歷次抽獎的得獎名單</div>
+        <div class="card">
+          <div class="card-ttl" style="justify-content:space-between">
+            <span><i class="fas fa-trophy" style="color:var(--a)"></i> 得獎名單</span>
+            <div class="fc">
+              <button class="btn bg2 bsm" onclick="exportCSV('winners')"><i class="fas fa-download"></i> 匯出 CSV</button>
+              <button class="btn bs bsm" id="clearWinnersBtn"><i class="fas fa-trash"></i> 清除</button>
+            </div>
+          </div>
+          <div id="winnerList"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /admin-wrap -->
+</div><!-- /adminScreen -->
+
+<div class="toastc" id="toastC"></div>
+<div class="cc" id="confC"></div>
+
+<script>
+// ===== DATA =====
+const STORAGE_KEY='qzD2';
+const DEF={
+  questions:[
+    {id:1,type:'single',text:'小明有3個蘋果，小紅給了他4個，請問小明現在共有幾個蘋果？',options:['5個','6個','7個','8個'],correct:[2]},
+    {id:2,type:'single',text:'下列哪一個是台灣的首都？',options:['台中','高雄','台北','台南'],correct:[2]},
+    {id:3,type:'multi',text:'下列哪些是哺乳動物？（可多選）',options:['鯊魚','狗','貓','金魚','大象'],correct:[1,2,4]},
+    {id:4,type:'text',text:'請問一個星期有幾天？請填入數字。',options:[],correct:['7','七']},
+    {id:5,type:'single',text:'太陽從哪個方向升起？',options:['西方','北方','東方','南方'],correct:[2]}
+  ],
+  pool:[],winners:[],records:[],
+  prizes:[
+    {id:1,emoji:'🥇',name:'一等獎',qty:1,drawn:0},
+    {id:2,emoji:'🥈',name:'二等獎',qty:2,drawn:0},
+    {id:3,emoji:'🥉',name:'三等獎',qty:3,drawn:0},
+    {id:4,emoji:'🎖️',name:'幸運獎',qty:5,drawn:0}
+  ],
+  settings:{title:'問答小學堂',desc:'完成所有題目全部答對，即可登錄資料參加抽獎！',classes:'一年甲班,一年乙班,一年丙班,二年甲班,二年乙班,二年丙班',showFeedback:true,randQ:true,randO:true,adminPw:'1234'}
+};
+function loadD(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}}
+function saveD(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D));}catch{}}
+
+// ===== GOOGLE 試算表同步 =====
+function getGasUrl(){ return localStorage.getItem('gasUrl')||'https://script.google.com/macros/s/AKfycbxdoM0g3e6puliTxXS7Bs78CUqtwkax9-_QYJ_HCokep03JauiWV1BC-e8yxLXYhAVm/exec'; }
+
+function syncToSheet(data) {
+  const url = getGasUrl();
+  if (!url) return;
+  fetch(url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {});
+}
+
+async function testSheetConnection() {
+  const url = getGasUrl();
+  if (!url) { toast('請先設定 GAS URL','ng'); return; }
+  try {
+    toast('測試連線中…','i');
+    const resp = await fetch(url);
+    const json = await resp.json();
+    if (json.status === 'ok') toast('✅ 連線成功！試算表串接正常','ok');
+    else toast('⚠️ 連線異常：' + json.message,'ng');
+  } catch(e) {
+    toast('❌ 連線失敗，請確認 URL 正確','ng');
+  }
+}
+let D=loadD();
+
+// ===== UTILS =====
+let editPrizeIdx=null,editQIdx=null;
+function toast(msg,type='i'){
+  const ic={ok:'check-circle',ng:'times-circle',i:'info-circle'};
+  const el=document.createElement('div');el.className=`toast t${type}`;
+  el.innerHTML=`<i class="fas fa-${ic[type]||'info-circle'}"></i>${msg}`;
+  document.getElementById('toastC').appendChild(el);setTimeout(()=>el.remove(),3200);
+}
+function confetti(){
+  const cols=['#4F6AF0','#FF6B6B','#FFD93D','#6BCB77','#8B5CF6','#FF9F43'];const c=document.getElementById('confC');
+  for(let i=0;i<60;i++){setTimeout(()=>{const el=document.createElement('div');el.className='cp';el.style.cssText=`left:${Math.random()*100}%;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${8+Math.random()*12}px;transform:rotate(${Math.random()*360}deg);animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*.4}s;`;c.appendChild(el);setTimeout(()=>el.remove(),4500);},i*25);}
+}
+function confirm2(ttl,msg,cb){
+  const o=document.getElementById('confirmOverlay');
+  document.getElementById('confirmTtl').textContent=ttl;
+  document.getElementById('confirmMsg').textContent=msg;
+  o.classList.add('open');
+  document.getElementById('confirmOk').onclick=()=>{o.classList.remove('open');cb();};
+  document.getElementById('confirmCancelBtn').onclick=()=>o.classList.remove('open');
+}
+function toCSV(rows,headers){const esc=v=>'"'+(String(v||'').replace(/"/g,'""'))+'"';return[headers.map(esc).join(','),...rows.map(r=>r.map(esc).join(','))].join('\n');}
+function downloadCSV(content,filename){const BOM='\uFEFF';const blob=new Blob([BOM+content],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);}
+function exportCSV(type){
+  const now=new Date().toLocaleDateString('zh-TW').replace(/\//g,'-');
+  if(type==='pool'||type==='all'){const rows=D.pool.map((p,i)=>[i+1,p.name,p.cls,p.time]);downloadCSV(toCSV(rows,['序號','姓名','班級','登錄時間']),`抽獎名單_${now}.csv`);}
+  if(type==='winners'||type==='all'){const rows=D.winners.map((w,i)=>[i+1,w.name,w.cls,w.prize||'—',w.drawnAt]);downloadCSV(toCSV(rows,['序號','姓名','班級','獎項','抽獎時間']),`得獎名單_${now}.csv`);}
+  if(type==='records'||type==='all'){const rows=D.records.map((r,i)=>[i+1,r.time,r.total,r.correct,r.accuracy+'%',r.registered?'是':'否']);downloadCSV(toCSV(rows,['序號','時間','總題數','答對','正確率','已登錄']),`答題記錄_${now}.csv`);}
+  toast('CSV 已下載 ✓','ok');
+}
+
+// ===== PANEL NAVIGATION =====
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sitem').forEach(s=>s.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.querySelector(`[data-panel="${name}"]`).classList.add('active');
+  // Render on show
+  D=loadD();
+  if(name==='draw'){renderDrawPanel();}
+  if(name==='prizes'){renderPrizeList();}
+  if(name==='export'){renderExportPanel();}
+  if(name==='questions'){renderQList();}
+  if(name==='settings'){renderSettings();}
+  if(name==='records'){renderRecords();}
+  if(name==='winners'){renderWinners();}
+}
+
+// ===== DRAW PANEL =====
+function renderDrawPanel(){
+  renderStats();
+  renderPrizeSelector();
+  renderPoolList();
+}
+function renderStats(){
+  document.getElementById('stat-pool').textContent=D.pool.length;
+  document.getElementById('stat-drawn').textContent=D.winners.length;
+  document.getElementById('stat-prizes').textContent=(D.prizes||[]).length;
+  document.getElementById('stat-records').textContent=D.records.length;
+  document.getElementById('sb-pool-cnt').textContent=D.pool.length;
+}
+function renderPrizeSelector(){
+  const prizes=D.prizes||[];
+  const el=document.getElementById('prizeSelList');
+  if(!prizes.length){el.innerHTML='<div style="color:var(--tm);font-size:13px;font-weight:700;padding:12px">⚠️ 尚未設定獎項</div>';return;}
+  el.innerHTML=prizes.map((p,i)=>{
+    const remain=p.qty-(p.drawn||0),disabled=remain<=0;
+    return `<label class="prize-sel-item${disabled?' bdis':''}">
+      <input type="radio" name="selPrize" value="${i}" ${disabled?'disabled':''} ${i===0&&!disabled?'checked':''}>
+      <span style="font-size:22px">${p.emoji}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:800">${p.name}</div><div style="font-size:11px;color:var(--tm);font-weight:600">數量 ${p.qty}</div></div>
+      <div style="font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;color:${remain>0?'var(--p)':'var(--ng)'}">剩 ${remain}</div>
+    </label>`;
+  }).join('');
+}
+function renderPoolList(){
+  const pool=D.pool;
+  document.getElementById('poolCntBdg').textContent=pool.length+' 人';
+  const el=document.getElementById('poolList');
+  el.innerHTML=pool.length===0?'<div class="pe">📭 尚無登錄者</div>':pool.map((p,i)=>`
+    <div class="pool-item" id="pi-${i}">
+      <div class="pnum">${i+1}</div>
+      <div style="flex:1"><div class="pname">${p.name}</div><div class="pcls">${p.cls}</div></div>
+      <div class="ptime">${p.time}</div>
+    </div>`).join('');
+}
+function doDraw(){
+  const pool=D.pool;if(pool.length===0){toast('抽獎名單為空！','ng');return;}
+  const sel=document.querySelector('input[name=selPrize]:checked');
+  if(!sel){toast('請先選擇獎項','ng');return;}
+  const prizeIdx=Number(sel.value),prize=D.prizes[prizeIdx];
+  if(!prize)return;
+  const remain=prize.qty-(prize.drawn||0);
+  if(remain<=0){toast(`${prize.name} 已抽完！`,'ng');return;}
+  const btn=document.getElementById('doDrawBtn');btn.disabled=true;btn.classList.add('bdis');
+  document.getElementById('drawPrizeLabel').textContent=`${prize.emoji} ${prize.name}`;
+  const slot=document.getElementById('drawSlot'),cls=document.getElementById('drawCls');
+  slot.classList.add('rolling');
+  let count=0;
+  const timer=setInterval(()=>{
+    const r=pool[Math.floor(Math.random()*pool.length)];
+    slot.textContent=r.name;cls.textContent=r.cls;count+=80;
+    if(count>=3000){
+      clearInterval(timer);slot.classList.remove('rolling');
+      const winner=pool[Math.floor(Math.random()*pool.length)];
+      slot.textContent=winner.name;cls.textContent=winner.cls;
+      document.querySelectorAll('.pool-item').forEach(e=>e.classList.remove('winner'));
+      const wi=pool.indexOf(winner);
+      const wEl=document.getElementById(`pi-${wi}`);
+      if(wEl){wEl.classList.add('winner');wEl.scrollIntoView({behavior:'smooth',block:'nearest'});}
+      prize.drawn=(prize.drawn||0)+1;
+      D.winners.push({name:winner.name,cls:winner.cls,prize:prize.name,prizeEmoji:prize.emoji,drawnAt:new Date().toLocaleString()});
+      saveD();
+      const w=D.winners[D.winners.length-1];
+      syncToSheet({type:'winner',name:w.name,cls:w.cls,prize:w.prize,prizeEmoji:w.prizeEmoji,drawnAt:w.drawnAt});confetti();
+      toast(`🎉 恭喜 ${winner.name}（${winner.cls}）獲得 ${prize.emoji}${prize.name}！`,'ok');
+      renderStats();renderPrizeSelector();
+      btn.disabled=false;btn.classList.remove('bdis');
+    }
+  },80);
+}
+function clearPool(){
+  confirm2('清空抽獎名單','確定清空所有已登錄學生？此操作無法復原。',()=>{
+    D.pool=[];saveD();renderDrawPanel();toast('已清空抽獎名單','i');
+    document.getElementById('drawSlot').textContent='— — —';
+    document.getElementById('drawCls').textContent='';
+    document.getElementById('drawPrizeLabel').textContent='—';
+  });
+}
+function resetAllPrizeDrawn(){
+  confirm2('重置獎項','確定將所有獎項的已抽數量歸零？',()=>{
+    (D.prizes||[]).forEach(p=>p.drawn=0);saveD();renderDrawPanel();toast('已重置所有獎項','ok');
+  });
+}
+
+// ===== PRIZES =====
+function renderPrizeList(){
+  const prizes=D.prizes||[];
+  const el=document.getElementById('prizeListEl');
+  if(!prizes.length){el.innerHTML='<div style="color:var(--tm);font-size:13px;font-weight:700;padding:16px">尚無獎項，點擊「新增獎項」開始設定</div>';return;}
+  el.innerHTML=prizes.map((p,i)=>{
+    const remain=p.qty-(p.drawn||0);
+    return `<div class="prize-list-item">
+      <div class="prize-em">${p.emoji}</div>
+      <div class="prize-info"><div class="prize-name">${p.name}</div><div class="prize-meta">總數：${p.qty} ｜ 已抽：${p.drawn||0} ｜ 剩餘：${remain}</div></div>
+      <div class="prize-remain" style="color:${remain>0?'var(--p)':'var(--ng)'}">${remain}</div>
+      <div class="fc" style="gap:6px">
+        <button class="btn bs bsm" onclick="editPrize(${i})"><i class="fas fa-edit"></i></button>
+        <button class="btn bsm" style="background:rgba(255,107,107,.12);color:var(--ng);border:none" onclick="delPrize(${i})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addPrize(){editPrizeIdx=null;document.getElementById('prizeEdTitle').textContent='新增獎項';document.getElementById('peN').value='';document.getElementById('peE').value='🎁';document.getElementById('peQ').value='1';document.getElementById('prizeEditor').classList.remove('hid');}
+function editPrize(i){editPrizeIdx=i;const p=D.prizes[i];document.getElementById('prizeEdTitle').textContent='編輯獎項';document.getElementById('peN').value=p.name;document.getElementById('peE').value=p.emoji;document.getElementById('peQ').value=p.qty;document.getElementById('prizeEditor').classList.remove('hid');}
+function savePrize(){
+  const name=document.getElementById('peN').value.trim(),emoji=document.getElementById('peE').value.trim()||'🎁',qty=parseInt(document.getElementById('peQ').value)||1;
+  if(!name){toast('請輸入獎項名稱','ng');return;}
+  if(editPrizeIdx!==null){const old=D.prizes[editPrizeIdx];D.prizes[editPrizeIdx]={...old,name,emoji,qty:Math.max(old.drawn||0,qty)};toast('已更新','ok');}
+  else{D.prizes.push({id:Date.now(),emoji,name,qty,drawn:0});toast('已新增','ok');}
+  saveD();renderPrizeList();document.getElementById('prizeEditor').classList.add('hid');
+}
+function delPrize(i){confirm2('刪除獎項',`確定刪除「${D.prizes[i].name}」？`,()=>{D.prizes.splice(i,1);saveD();renderPrizeList();toast('已刪除','i');});}
+
+// ===== EXPORT PANEL =====
+function renderExportPanel(){
+  document.getElementById('exp-pool-cnt').textContent=D.pool.length+' 人';
+  document.getElementById('exp-winner-cnt').textContent=D.winners.length+' 筆';
+  document.getElementById('exp-rec-cnt').textContent=D.records.length+' 筆';
+}
+
+// ===== QUESTIONS =====
+function renderQList(){
+  const el=document.getElementById('qListEl');
+  if(!D.questions.length){el.innerHTML='<div style="color:var(--tm);font-size:13px;font-weight:700;padding:16px">尚無題目</div>';return;}
+  const typeMap={single:'單選題',multi:'多選題',text:'填空題'};
+  el.innerHTML=D.questions.map((q,i)=>`<div class="q-item">
+    <div class="q-item-h">
+      <span class="q-num">Q${i+1} ${typeMap[q.type]||q.type}</span>
+      <div class="q-acts">
+        <button class="btn bs bsm" onclick="editQ(${i})"><i class="fas fa-edit"></i></button>
+        <button class="btn bsm" style="background:rgba(255,107,107,.12);color:var(--ng);border:none" onclick="delQ(${i})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+    <div class="q-text">${q.text}</div>
+    <div class="q-meta">${q.type==='text'?`答案：${q.correct.join('、')}`:`${q.options.length} 個選項，${q.correct.length} 個正確`}</div>
+  </div>`).join('');
+}
+function addQ(){
+  editQIdx=null;document.getElementById('edTitle').textContent='新增題目';document.getElementById('edType').value='single';document.getElementById('edQ').value='';
+  showEdType('single');renderOptEd(['','',''],[] );
+  document.getElementById('qEditor').classList.remove('hid');document.getElementById('qEditor').scrollIntoView({behavior:'smooth'});
+}
+function editQ(i){
+  editQIdx=i;const q=D.questions[i];document.getElementById('edTitle').textContent='編輯題目';document.getElementById('edType').value=q.type;document.getElementById('edQ').value=q.text;
+  showEdType(q.type);
+  if(q.type==='text')document.getElementById('edTxtAns').value=q.correct.join(',');
+  else renderOptEd(q.options,q.correct);
+  document.getElementById('qEditor').classList.remove('hid');document.getElementById('qEditor').scrollIntoView({behavior:'smooth'});
+}
+function showEdType(t){document.getElementById('edOptsSection').classList.toggle('hid',t==='text');document.getElementById('edTxtSec').classList.toggle('hid',t!=='text');}
+function renderOptEd(opts,correct){
+  document.getElementById('optEdList').innerHTML=opts.map((o,i)=>`
+    <div class="opt-ed-row">
+      <input class="fi" type="text" value="${o}" placeholder="選項 ${i+1}" data-i="${i}" style="flex:1;padding:8px 11px">
+      <button class="oct${correct.includes(i)?' on':''}" data-ti="${i}" title="正確答案">✓</button>
+      <button class="odel" data-di="${i}" title="刪除"><i class="fas fa-times"></i></button>
+    </div>`).join('');
+}
+function getEdData(){
+  const rows=document.querySelectorAll('#optEdList .opt-ed-row');
+  const opts=[],correct=[];
+  rows.forEach((r,i)=>{opts.push(r.querySelector('input').value.trim());if(r.querySelector('.oct').classList.contains('on'))correct.push(i);});
+  return{opts,correct};
+}
+function saveQ(){
+  const type=document.getElementById('edType').value,text=document.getElementById('edQ').value.trim();
+  if(!text){toast('請輸入題目內容','ng');return;}
+  let options=[],correct=[];
+  if(type==='text'){const ans=document.getElementById('edTxtAns').value.trim();if(!ans){toast('請輸入正確答案','ng');return;}correct=ans.split(',').map(s=>s.trim());}
+  else{const d=getEdData();options=d.opts;correct=d.correct;if(options.some(o=>!o)){toast('請填寫所有選項','ng');return;}if(!correct.length){toast('請設定正確答案','ng');return;}}
+  const q={id:Date.now(),type,text,options,correct};
+  if(editQIdx!==null)D.questions[editQIdx]=q;else D.questions.push(q);
+  saveD();renderQList();document.getElementById('qEditor').classList.add('hid');toast('題目已儲存','ok');
+}
+function delQ(i){confirm2('刪除題目',`確定刪除第 ${i+1} 題？`,()=>{D.questions.splice(i,1);saveD();renderQList();toast('已刪除','i');});}
+
+// ===== SETTINGS =====
+function renderSettings(){
+  const s=D.settings;
+  document.getElementById('stTitle').value=s.title;document.getElementById('stDesc').value=s.desc;document.getElementById('stClasses').value=s.classes;
+  setTog('togFb',s.showFeedback);setTog('togRandQ',s.randQ);setTog('togRandO',s.randO);
+  // Load GAS URL from localStorage
+  document.getElementById('gasUrl').value=localStorage.getItem('gasUrl')||'https://script.google.com/macros/s/AKfycbxdoM0g3e6puliTxXS7Bs78CUqtwkax9-_QYJ_HCokep03JauiWV1BC-e8yxLXYhAVm/exec';
+}
+function setTog(id,v){document.getElementById(id).classList.toggle('on',v);}
+function getTog(id){return document.getElementById(id).classList.contains('on');}
+function saveSettings(){
+  const s=D.settings;
+  s.title=document.getElementById('stTitle').value.trim()||s.title;
+  s.desc=document.getElementById('stDesc').value.trim()||s.desc;
+  s.classes=document.getElementById('stClasses').value.trim()||s.classes;
+  s.showFeedback=getTog('togFb');s.randQ=getTog('togRandQ');s.randO=getTog('togRandO');
+  saveD();toast('設定已儲存','ok');
+}
+function savePw(){
+  const np=document.getElementById('newPw').value,cp=document.getElementById('cfmPw').value;
+  if(!np){toast('請輸入新密碼','ng');return;}if(np!==cp){toast('兩次密碼不一致','ng');return;}
+  D.settings.adminPw=np;saveD();document.getElementById('newPw').value='';document.getElementById('cfmPw').value='';toast('密碼已更新','ok');
+}
+
+// ===== RECORDS =====
+function renderRecords(){
+  const recs=D.records,tot=recs.length;
+  const ok=recs.filter(r=>r.accuracy===100).length;
+  const reg=recs.filter(r=>r.registered).length;
+  const avg=tot?Math.round(recs.reduce((s,r)=>s+r.accuracy,0)/tot):0;
+  document.getElementById('stTotal').textContent=tot;document.getElementById('stOk').textContent=ok;
+  document.getElementById('stReg').textContent=reg;document.getElementById('stAvg').textContent=avg+'%';
+  const tb=document.getElementById('recTbody');
+  if(!tot){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--tm);padding:28px">尚無記錄</td></tr>';return;}
+  tb.innerHTML=recs.slice(0,50).map((r,i)=>`<tr>
+    <td>${i+1}</td><td>${r.time}</td><td>${r.total}</td><td>${r.correct}</td>
+    <td><span class="bdg ${r.accuracy===100?'bok':r.accuracy>=60?'bwn':'bng'}">${r.accuracy}%</span></td>
+    <td>${r.registered?'<span class="bdg bok">已登錄</span>':'<span style="color:var(--tm);font-size:12px;font-weight:700">未登錄</span>'}</td>
+  </tr>`).join('');
+}
+function clearRecs(){confirm2('清除記錄','確定清除所有答題記錄？',()=>{D.records=[];saveD();renderRecords();toast('已清除','i');});}
+
+// ===== WINNERS =====
+function renderWinners(){
+  const el=document.getElementById('winnerList'),w=D.winners;
+  if(!w.length){el.innerHTML='<div style="color:var(--tm);font-size:13px;font-weight:700;padding:24px">尚無得獎記錄</div>';return;}
+  el.innerHTML=w.slice().reverse().map((x,i)=>`
+    <div class="winner-item">
+      <span style="font-size:22px">${x.prizeEmoji||'🏆'}</span>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:800">${x.name} <span style="font-size:12px;color:var(--tm);font-weight:600">${x.cls}</span></div>
+        <div style="font-size:11px;color:var(--tm);font-weight:600">${x.drawnAt}</div>
+      </div>
+      <span class="bdg bwn">${x.prize||'得獎'}</span>
+    </div>`).join('');
+}
+function clearWinners(){confirm2('清除得獎記錄','確定清除所有得獎記錄？',()=>{D.winners=[];saveD();renderWinners();toast('已清除','i');});}
+
+// ===== LOGIN =====
+let loggedIn=false;
+function tryLogin(){
+  D=loadD();
+  const pw=document.getElementById('loginPw').value;
+  if(pw===D.settings.adminPw){
+    loggedIn=true;
+    document.getElementById('loginScreen').classList.add('hid');
+    document.getElementById('adminScreen').classList.remove('hid');
+    showPanel('draw');
+    // Auto-refresh every 10s
+    setInterval(()=>{if(loggedIn){D=loadD();const ap=document.querySelector('.sitem.active');if(ap)showPanel(ap.dataset.panel);}},10000);
+  } else {document.getElementById('loginErr').classList.remove('hid');}
+}
+
+// ===== EVENTS =====
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('loginBtn').addEventListener('click',tryLogin);
+  document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
+  document.getElementById('logoutBtn').addEventListener('click',()=>{
+    loggedIn=false;document.getElementById('adminScreen').classList.add('hid');
+    document.getElementById('loginScreen').classList.remove('hid');document.getElementById('loginPw').value='';
+  });
+
+  // Sidebar nav
+  document.querySelectorAll('[data-panel]').forEach(btn=>{
+    btn.addEventListener('click',()=>showPanel(btn.dataset.panel));
+  });
+
+  // Draw
+  document.getElementById('doDrawBtn').addEventListener('click',doDraw);
+  document.getElementById('clearPoolBtn').addEventListener('click',clearPool);
+
+  // Prizes
+  document.getElementById('addPrizeBtn').addEventListener('click',addPrize);
+  document.getElementById('savePrizeBtn').addEventListener('click',savePrize);
+  document.getElementById('cancelPrizeBtn').addEventListener('click',()=>document.getElementById('prizeEditor').classList.add('hid'));
+
+  // Questions
+  document.getElementById('addQBtn').addEventListener('click',addQ);
+  document.getElementById('saveQBtn').addEventListener('click',saveQ);
+  document.getElementById('cancelEdBtn').addEventListener('click',()=>document.getElementById('qEditor').classList.add('hid'));
+  document.getElementById('addOptBtn').addEventListener('click',()=>{
+    const rows=document.querySelectorAll('#optEdList .opt-ed-row');
+    const opts=Array.from(rows).map(r=>r.querySelector('input').value);
+    const corr=Array.from(rows).map((r,i)=>r.querySelector('.oct').classList.contains('on')?i:-1).filter(i=>i>=0);
+    opts.push('');renderOptEd(opts,corr);
+  });
+  document.getElementById('optEdList').addEventListener('click',e=>{
+    const tb=e.target.closest('.oct'),db=e.target.closest('.odel');
+    if(tb){if(document.getElementById('edType').value==='single')document.querySelectorAll('.oct').forEach(b=>b.classList.remove('on'));tb.classList.toggle('on');}
+    if(db){
+      const rows=document.querySelectorAll('#optEdList .opt-ed-row');if(rows.length<=2){toast('至少需要2個選項','ng');return;}
+      const idx=Number(db.dataset.di);
+      const opts=Array.from(rows).map(r=>r.querySelector('input').value);
+      const corr=Array.from(rows).map((r,i)=>r.querySelector('.oct').classList.contains('on')?i:-1).filter(i=>i>=0);
+      opts.splice(idx,1);renderOptEd(opts,corr.filter(c=>c!==idx).map(c=>c>idx?c-1:c));
+    }
+  });
+  document.getElementById('edType').addEventListener('change',e=>{showEdType(e.target.value);if(e.target.value!=='text')renderOptEd(['','',''],[] );});
+
+  // Settings
+  document.getElementById('saveStBtn').addEventListener('click',saveSettings);
+  document.getElementById('savePwBtn').addEventListener('click',savePw);
+  ['togFb','togRandQ','togRandO'].forEach(id=>{document.getElementById(id).addEventListener('click',function(){this.classList.toggle('on');});});
+
+  // Records / Winners
+  document.getElementById('clearRecsBtn').addEventListener('click',clearRecs);
+  document.getElementById('clearWinnersBtn').addEventListener('click',clearWinners);
+
+  // Google Sheets
+  document.getElementById('saveGasBtn').addEventListener('click',()=>{
+    const url=document.getElementById('gasUrl').value.trim();
+    localStorage.setItem('gasUrl',url);
+    // Also update the runtime variable in student page (same origin only)
+    window._gasUrl=url;
+    toast(url?'✅ URL 已儲存，串接已啟用':'已清除 URL（串接停用）','ok');
+  });
+  document.getElementById('testGasBtn').addEventListener('click',()=>{
+    const url=document.getElementById('gasUrl').value.trim()||getGasUrl();
+    if(!url){toast('請先輸入 Web App URL','ng');return;}
+    toast('測試中，發送測試資料…','i');
+    fetch(url,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'ping'})
+    }).then(()=>{
+      toast('✅ 請求已送出！請至 Google 試算表確認是否有資料寫入','ok');
+    }).catch(()=>{
+      toast('❌ 網路錯誤，請確認 URL 正確','ng');
+    });
+  });
+});
+</script>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-ttl" id="confirmTtl">確認操作</div>
+    <div class="confirm-msg" id="confirmMsg">確定要繼續嗎？</div>
+    <div class="confirm-acts">
+      <button class="btn bs" id="confirmCancelBtn">取消</button>
+      <button class="btn br" id="confirmOk">確定</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
