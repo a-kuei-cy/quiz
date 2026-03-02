@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>問答小學堂 — 學生答題</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
+:root{--p:#4F6AF0;--pd:#3951D8;--s:#FF6B6B;--a:#FFD93D;--a2:#6BCB77;--bg:#EEF2FF;--card:#fff;--t:#1A1F3A;--tm:#6B7BA4;--bd:#E2E8FF;--ok:#6BCB77;--ng:#FF6B6B;--r:20px;--rs:12px;--sh:0 8px 32px rgba(79,106,240,.12);--shh:0 16px 48px rgba(79,106,240,.22);}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(79,106,240,.07) 0,transparent 50%),radial-gradient(circle at 85% 80%,rgba(255,107,107,.07) 0,transparent 50%);pointer-events:none;z-index:0}
+
+/* NAV */
+nav{background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-bottom:2px solid var(--bd);position:sticky;top:0;z-index:100;padding:0 20px}
+.nav-in{max-width:860px;margin:0 auto;height:62px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--p),#8B5CF6);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 4px 12px rgba(79,106,240,.3)}
+.nav-title{font-family:'Baloo 2',cursive;font-size:19px;font-weight:800}
+.nav-sub{font-size:11px;color:var(--tm)}
+.nav-acts{display:flex;gap:8px}
+.bn{padding:8px 14px;border-radius:10px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .2s}
+.bna{background:#F1F5FF;color:var(--p)}.bna:hover{background:#E2E8FF;transform:translateY(-1px)}
+
+/* LAYOUT */
+main{max-width:860px;margin:0 auto;padding:36px 20px;position:relative;z-index:1}
+.page{display:none;animation:fi .38s ease}.page.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--card);border-radius:var(--r);border:2px solid var(--bd);box-shadow:var(--sh);padding:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 30px;border-radius:var(--rs);border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;transition:all .22s}
+.btn:active{transform:scale(.97)}
+.bp{background:linear-gradient(135deg,var(--p),#8B5CF6);color:#fff;box-shadow:0 6px 20px rgba(79,106,240,.35)}.bp:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(79,106,240,.45)}
+.bs{background:#F1F5FF;color:var(--p)}.bs:hover{background:#E2E8FF;transform:translateY(-1px)}
+.bg2{background:linear-gradient(135deg,var(--a2),#45B660);color:#fff;box-shadow:0 6px 20px rgba(107,203,119,.35)}.bg2:hover{transform:translateY(-2px)}
+.br{background:linear-gradient(135deg,var(--s),#FF3D6B);color:#fff;box-shadow:0 6px 20px rgba(255,107,107,.35)}.br:hover{transform:translateY(-2px)}
+.bdis{opacity:.4;pointer-events:none}
+.bsm{padding:8px 16px;font-size:13px;border-radius:8px}
+.fc{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+
+/* HOME */
+.hero{text-align:center;margin-bottom:40px}
+.hero-ttl{font-family:'Baloo 2',cursive;font-size:clamp(28px,5vw,50px);font-weight:800;line-height:1.2;margin-bottom:10px}
+.hero-ttl span{background:linear-gradient(135deg,var(--p),#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-desc{font-size:17px;color:var(--tm);font-weight:600;margin-bottom:28px}
+.hero-banner{width:100%;max-width:440px;height:190px;margin:0 auto 34px;border-radius:var(--r);background:linear-gradient(135deg,#4F6AF0,#8B5CF6 50%,#EC4899);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 14px 40px rgba(79,106,240,.28)}
+.hbm{font-size:72px;animation:fl 3s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(0,0,0,.2))}
+.hbd{position:absolute;font-size:34px;opacity:.28;animation:fl 3s ease-in-out infinite}
+.d1{top:14px;left:22px;animation-delay:.3s}.d2{bottom:14px;right:22px;animation-delay:.6s}.d3{top:50%;left:8%;animation-delay:1s}.d4{top:18%;right:8%;animation-delay:1.4s}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px}
+.sc{background:#fff;border:2px solid var(--bd);border-radius:var(--r);padding:22px 14px;text-align:center;transition:all .22s}
+.sc:hover{transform:translateY(-4px);box-shadow:var(--shh);border-color:var(--p)}
+.si{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px}
+.sl{font-size:12px;font-weight:700;color:var(--tm);margin-bottom:4px}
+.sv{font-family:'Baloo 2',cursive;font-size:26px;font-weight:800}
+
+/* QUIZ */
+.pw{margin-bottom:24px}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pl{font-size:13px;font-weight:700;color:var(--tm)}
+.pc{font-size:13px;font-weight:800;color:var(--p)}
+.pt{height:9px;background:var(--bd);border-radius:99px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--p),#8B5CF6);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.qh{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.qn{width:42px;height:42px;min-width:42px;background:linear-gradient(135deg,var(--p),#8B5CF6);border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-size:19px;font-weight:800;color:#fff}
+.qt{font-size:19px;font-weight:800;line-height:1.4;padding-top:5px}
+.qb{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;font-size:12px;font-weight:800;margin-bottom:18px}
+.qbs{background:#EEF0FF;color:var(--p)}.qbm{background:#FFF0EE;color:var(--s)}.qbt{background:#FFFBEE;color:#D97706}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;padding:14px 18px;border:2.5px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:all .18s;user-select:none;background:#fff}
+.opt:hover:not(.locked){border-color:var(--p);background:#F5F7FF;transform:translateX(4px)}
+.opt.sel{border-color:var(--p);background:#EEF0FF}.opt.sel .om{background:var(--p);color:#fff;border-color:var(--p)}
+.opt.ook{border-color:var(--ok);background:#F0FFF4}.opt.ook .om{background:var(--ok);color:#fff;border-color:var(--ok)}
+.opt.ong{border-color:var(--ng);background:#FFF5F5}.opt.ong .om{background:var(--ng);color:#fff;border-color:var(--ng)}
+.opt.locked{cursor:default}
+.om{width:30px;height:30px;min-width:30px;border:2.5px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--tm);transition:all .18s}
+.om.circ{border-radius:50%}.ot{font-size:15px;font-weight:700;flex:1}
+.tinp{width:100%;padding:14px 18px;border:2.5px solid var(--bd);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--t);background:#fff;outline:none;transition:all .18s}
+.tinp:focus{border-color:var(--p);background:#F5F7FF}.tinp.ook{border-color:var(--ok);background:#F0FFF4}.tinp.ong{border-color:var(--ng);background:#FFF5F5}
+.fb{margin-top:18px;padding:14px 18px;border-radius:var(--rs);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;animation:fi .3s ease}
+.fb.ook{background:#F0FFF4;border:2px solid var(--ok);color:#16653E}.fb.ong{background:#FFF5F5;border:2px solid var(--ng);color:#B91C1C}
+.qnav{display:flex;justify-content:space-between;align-items:center}
+
+/* REGISTER */
+.rw{max-width:480px;margin:0 auto;text-align:center}
+.ri{font-size:72px;margin-bottom:12px;animation:fl 3s ease-in-out infinite;display:block}
+.rttl{font-family:'Baloo 2',cursive;font-size:34px;font-weight:800;margin-bottom:6px}
+.rdsc{font-size:16px;color:var(--tm);font-weight:600;margin-bottom:26px}
+.fl{display:block;font-size:13px;font-weight:700;color:var(--tm);margin-bottom:6px;text-align:left}
+.fi{width:100%;padding:13px 16px;border:2.5px solid var(--bd);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--t);background:#fff;outline:none;transition:all .18s}
+.fi:focus{border-color:var(--p)}.fg{margin-bottom:14px}
+.cbs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px}
+.cb{padding:7px 14px;border-radius:9px;border:2.5px solid var(--bd);background:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .18s}
+.cb:hover{border-color:var(--p);background:#EEF0FF}.cb.sel{border-color:var(--p);background:var(--p);color:#fff}
+
+/* WAIT */
+.ww{text-align:center;padding:16px 0}
+.wic{font-size:78px;margin-bottom:14px;animation:fl 3s ease-in-out infinite;display:block}
+.wttl{font-family:'Baloo 2',cursive;font-size:32px;font-weight:800;margin-bottom:8px}
+.wdsc{font-size:15px;color:var(--tm);font-weight:600;margin-bottom:24px;line-height:1.6}
+.wbox{background:linear-gradient(135deg,#F0FFF4,#E8FFF0);border:2.5px solid var(--ok);border-radius:var(--r);padding:22px;margin-bottom:22px}
+.wname{font-family:'Baloo 2',cursive;font-size:26px;font-weight:800;color:var(--ok)}
+.wcls{font-size:15px;color:#16653E;font-weight:700}
+.dots{display:inline-flex;gap:5px;margin-left:5px}
+.dot{width:6px;height:6px;background:var(--ok);border-radius:50%;animation:bk 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bk{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+/* FAIL */
+.fw{text-align:center}
+.fic{font-size:78px;margin-bottom:14px}
+.fttl{font-family:'Baloo 2',cursive;font-size:32px;font-weight:800;color:var(--ng);margin-bottom:8px}
+.fdsc{font-size:15px;color:var(--tm);font-weight:600;margin-bottom:24px}
+.wl{text-align:left;background:#FFF5F5;border:2px solid var(--ng);border-radius:var(--rs);padding:16px 18px;margin-bottom:22px}
+.wi{font-size:13px;font-weight:700;color:#B91C1C;padding:5px 0;border-bottom:1px dashed #FFD0D0;display:flex;gap:8px}
+.wi:last-child{border-bottom:none}
+
+/* HELP MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(26,31,58,.6);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:14px}
+.mo.open{display:flex}
+.mc{background:#fff;border-radius:var(--r);width:100%;max-width:520px;max-height:93vh;overflow-y:auto;box-shadow:0 28px 72px rgba(0,0,0,.2);animation:moin .32s cubic-bezier(.34,1.56,.64,1)}
+@keyframes moin{from{opacity:0;transform:scale(.88) translateY(28px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mh{padding:22px 26px;border-bottom:2px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;border-radius:var(--r) var(--r) 0 0}
+.mttl{font-family:'Baloo 2',cursive;font-size:22px;font-weight:800}
+.mcls{width:34px;height:34px;border:none;background:#F1F5FF;border-radius:9px;cursor:pointer;font-size:15px;color:var(--tm);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.mcls:hover{background:#E2E8FF}
+.mb{padding:26px}
+
+/* TOAST / CONFETTI */
+.toastc{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px}
+.toast{padding:12px 16px;border-radius:var(--rs);font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.14);animation:fi .32s cubic-bezier(.34,1.56,.64,1);max-width:300px}
+.tok{background:var(--ok);color:#fff}.tng{background:var(--ng);color:#fff}.ti{background:var(--p);color:#fff}
+.cc{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden}
+.cp{position:absolute;border-radius:3px;animation:cf linear forwards}
+@keyframes cf{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ADMIN LINK BADGE */
+.admin-badge{position:fixed;bottom:22px;left:22px;z-index:500;background:rgba(79,106,240,.12);border:1.5px solid var(--bd);color:var(--tm);font-size:12px;font-weight:700;padding:8px 14px;border-radius:99px;cursor:pointer;backdrop-filter:blur(10px);transition:all .2s;display:flex;align-items:center;gap:6px}
+.admin-badge:hover{background:var(--p);color:#fff;border-color:var(--p)}
+
+.hid{display:none!important}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="nav-brand">
+      <div class="nav-logo">🎓</div>
+      <div>
+        <div class="nav-title" id="heroSpanNav">問答小學堂</div>
+        <div class="nav-sub">學生答題系統</div>
+      </div>
+    </div>
+    <div class="nav-acts">
+      <button class="bn bna" id="helpBtn"><i class="fas fa-question-circle"></i> 說明</button>
+      <a href="admin.html" class="bn bna"><i class="fas fa-shield-alt"></i> 管理後台</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- HOME -->
+  <div class="page active" id="homePage">
+    <div class="hero">
+      <div class="hero-banner">
+        <span class="hbm">🏆</span>
+        <span class="hbd d1">📚</span><span class="hbd d2">🎉</span><span class="hbd d3">⭐</span><span class="hbd d4">🎯</span>
+      </div>
+      <h1 class="hero-ttl"><span id="heroSpan">問答小學堂</span></h1>
+      <p class="hero-desc" id="heroDesc">完成所有題目全部答對，即可登錄資料參加抽獎！</p>
+    </div>
+    <div class="sg">
+      <div class="sc">
+        <div class="si" style="background:#EEF0FF;color:var(--p)"><i class="fas fa-list-check"></i></div>
+        <div class="sl">題目數量</div>
+        <div class="sv" id="homeQC" style="color:var(--p)">0</div>
+      </div>
+      <div class="sc">
+        <div class="si" style="background:#FFF0EE;color:var(--s)"><i class="fas fa-users"></i></div>
+        <div class="sl">已登錄人數</div>
+        <div class="sv" id="homeRC" style="color:var(--s)">0</div>
+      </div>
+      <div class="sc">
+        <div class="si" style="background:#FFFBEE;color:#D97706"><i class="fas fa-gift"></i></div>
+        <div class="sl">獎項種類</div>
+        <div class="sv" id="homePrizeC" style="color:#D97706">0</div>
+      </div>
+    </div>
+    <div class="fc">
+      <button class="btn bp" id="startQuizBtn" style="padding:16px 44px;font-size:17px"><i class="fas fa-play"></i> 開始答題</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="page" id="quizPage">
+    <div class="card">
+      <div class="pw">
+        <div class="ph"><span class="pl">題目進度</span><span class="pc"><span id="pCur">1</span> / <span id="pTot">5</span></span></div>
+        <div class="pt"><div class="pf" id="progBar" style="width:20%"></div></div>
+      </div>
+      <div class="qh">
+        <div class="qn" id="qNum">1</div>
+        <div class="qt" id="qTxt"></div>
+      </div>
+      <div id="qBadge" class="qb qbs"></div>
+      <div class="opts" id="optsEl"></div>
+      <div class="fb hid" id="fbEl"></div>
+      <div class="qnav" style="margin-top:24px">
+        <button class="btn bs bdis" id="prevBtn"><i class="fas fa-arrow-left"></i> 上一題</button>
+        <button class="btn bp bdis" id="nextBtn">下一題 <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="page" id="registerPage">
+    <div class="card">
+      <div class="rw">
+        <span class="ri">🎉</span>
+        <h2 class="rttl">全部答對！</h2>
+        <p class="rdsc">請填寫資料完成抽獎登錄</p>
+        <div class="fg">
+          <label class="fl"><i class="fas fa-chalkboard-teacher"></i> 班級</label>
+          <div class="cbs" id="clsBtns"></div>
+          <input class="fi" id="regClass" type="text" placeholder="或直接輸入班級名稱">
+        </div>
+        <div class="fg">
+          <label class="fl"><i class="fas fa-user"></i> 姓名</label>
+          <input class="fi" id="regName" type="text" placeholder="請輸入您的真實姓名">
+        </div>
+        <div class="fc" style="margin-top:20px">
+          <button class="btn bg2" id="submitRegBtn" style="width:100%;padding:15px"><i class="fas fa-paper-plane"></i> 確認登錄</button>
+          <button class="btn bs bsm" id="regBackBtn"><i class="fas fa-redo"></i> 重新答題</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WAIT -->
+  <div class="page" id="waitPage">
+    <div class="card">
+      <div class="ww">
+        <span class="wic">⏳</span>
+        <h2 class="wttl">登錄成功！</h2>
+        <p class="wdsc">您已成功加入抽獎名單<br>請等候管理員進行抽獎</p>
+        <div class="wbox">
+          <div class="wname" id="waitName">—</div>
+          <div class="wcls" id="waitCls">—</div>
+        </div>
+        <div style="color:var(--tm);font-size:14px;font-weight:700">等待抽獎中<span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+        <div class="fc" style="margin-top:28px">
+          <button class="btn bs" id="waitHomeBtn"><i class="fas fa-home"></i> 返回首頁</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAIL -->
+  <div class="page" id="failPage">
+    <div class="card">
+      <div class="fw">
+        <div class="fic">😢</div>
+        <h2 class="fttl">尚未全部答對</h2>
+        <p class="fdsc">需要全部答對才能參加抽獎，加油！</p>
+        <div class="wl" id="wrongList"></div>
+        <div class="fc">
+          <button class="btn bp" id="retryBtn" style="padding:14px 30px"><i class="fas fa-redo"></i> 重新答題</button>
+          <button class="btn bs" id="failHomeBtn"><i class="fas fa-home"></i> 返回首頁</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- HELP MODAL -->
+<div class="mo" id="helpModal">
+  <div class="mc">
+    <div class="mh"><div class="mttl">❓ 使用說明</div><button class="mcls" id="closeHelpBtn"><i class="fas fa-times"></i></button></div>
+    <div class="mb" style="display:flex;flex-direction:column;gap:18px">
+      <div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:9px">📖 答題流程</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--tm)">
+          <div>① 點擊「開始答題」— 題目與選項每次隨機排列</div>
+          <div>② 回答每道題目，確認後點擊「下一題」</div>
+          <div>③ <strong style="color:var(--t)">必須全部答對</strong>才能進入登錄畫面</div>
+          <div>④ 填入班級與姓名完成登錄，等待管理員抽獎</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:9px">🎯 題目類型</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--tm)">
+          <div><strong style="color:var(--p)">單選題：</strong>選擇一個最正確的選項</div>
+          <div><strong style="color:var(--s)">多選題：</strong>可選擇多個正確選項，需全對才算正確</div>
+          <div><strong style="color:#D97706">填空題：</strong>直接輸入答案文字</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:9px">🎁 抽獎說明</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--tm)">
+          <div>• 抽獎由管理員操作，從已登錄名單中隨機抽出</div>
+          <div>• 請確保填寫真實的班級與姓名</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin shortcut -->
+<a href="admin.html" class="admin-badge" title="前往後台管理">
+  <i class="fas fa-shield-alt"></i> 管理後台
+</a>
+
+<div class="toastc" id="toastC"></div>
+<div class="cc" id="confC"></div>
+
+<script>
+// ===== SHARED DATA =====
+const STORAGE_KEY = 'qzD2';
+const DEF = {
+  questions:[
+    {id:1,type:'single',text:'小明有3個蘋果，小紅給了他4個，請問小明現在共有幾個蘋果？',options:['5個','6個','7個','8個'],correct:[2]},
+    {id:2,type:'single',text:'下列哪一個是台灣的首都？',options:['台中','高雄','台北','台南'],correct:[2]},
+    {id:3,type:'multi',text:'下列哪些是哺乳動物？（可多選）',options:['鯊魚','狗','貓','金魚','大象'],correct:[1,2,4]},
+    {id:4,type:'text',text:'請問一個星期有幾天？請填入數字。',options:[],correct:['7','七']},
+    {id:5,type:'single',text:'太陽從哪個方向升起？',options:['西方','北方','東方','南方'],correct:[2]}
+  ],
+  pool:[],winners:[],records:[],
+  prizes:[
+    {id:1,emoji:'🥇',name:'一等獎',qty:1,drawn:0},
+    {id:2,emoji:'🥈',name:'二等獎',qty:2,drawn:0},
+    {id:3,emoji:'🥉',name:'三等獎',qty:3,drawn:0},
+    {id:4,emoji:'🎖️',name:'幸運獎',qty:5,drawn:0}
+  ],
+  settings:{title:'問答小學堂',desc:'完成所有題目全部答對，即可登錄資料參加抽獎！',classes:'一年甲班,一年乙班,一年丙班,二年甲班,二年乙班,二年丙班',showFeedback:true,randQ:true,randO:true,adminPw:'1234'}
+};
+function loadD(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}}
+function saveD(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D));}catch{}}
+
+// ===== GOOGLE 試算表同步 =====
+// URL 從 localStorage 讀取（由後台設定頁儲存）
+function getGasUrl(){ return localStorage.getItem('gasUrl')||'https://script.google.com/macros/s/AKfycbxdoM0g3e6puliTxXS7Bs78CUqtwkax9-_QYJ_HCokep03JauiWV1BC-e8yxLXYhAVm/exec'; }
+
+function syncToSheet(data) {
+  const url = getGasUrl();
+  if (!url) return;
+  fetch(url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {});
+}
+let D=loadD();
+
+// ===== STATE =====
+let S={curQ:0,qOrd:[],oOrds:{},answers:{},tmpMulti:{}};
+
+// ===== UTILS =====
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function toast(msg,type='i'){
+  const ic={ok:'check-circle',ng:'times-circle',i:'info-circle'};
+  const el=document.createElement('div');el.className=`toast t${type}`;
+  el.innerHTML=`<i class="fas fa-${ic[type]||'info-circle'}"></i>${msg}`;
+  document.getElementById('toastC').appendChild(el);setTimeout(()=>el.remove(),3200);
+}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function confetti(){
+  const cols=['#4F6AF0','#FF6B6B','#FFD93D','#6BCB77','#8B5CF6','#FF9F43'];const c=document.getElementById('confC');
+  for(let i=0;i<70;i++){setTimeout(()=>{const el=document.createElement('div');el.className='cp';el.style.cssText=`left:${Math.random()*100}%;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${8+Math.random()*12}px;transform:rotate(${Math.random()*360}deg);animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*.4}s;`;c.appendChild(el);setTimeout(()=>el.remove(),4500);},i*25);}
+}
+
+// ===== HOME =====
+function renderHome(){
+  D=loadD(); // Reload fresh data
+  const s=D.settings;
+  document.getElementById('heroSpan').textContent=s.title;
+  document.getElementById('heroSpanNav').textContent=s.title;
+  document.getElementById('heroDesc').textContent=s.desc;
+  document.getElementById('homeQC').textContent=D.questions.length;
+  document.getElementById('homeRC').textContent=D.pool.length;
+  document.getElementById('homePrizeC').textContent=(D.prizes||[]).length;
+}
+
+// ===== QUIZ =====
+function startQuiz(){
+  const n=D.questions.length;
+  S.curQ=0;S.answers={};S.tmpMulti={};
+  S.qOrd=D.settings.randQ?shuffle([...Array(n).keys()]):[...Array(n).keys()];
+  S.oOrds={};
+  D.questions.forEach((q,qi)=>{S.oOrds[qi]=q.type!=='text'&&D.settings.randO?shuffle([...Array(q.options.length).keys()]):[...Array(q.options.length).keys()];});
+  showPage('quizPage');renderQ();
+}
+
+function renderQ(){
+  const total=S.qOrd.length,pos=S.curQ;
+  const qOI=S.qOrd[pos],q=D.questions[qOI],oOrd=S.oOrds[qOI],ans=S.answers[pos];
+  document.getElementById('pCur').textContent=pos+1;
+  document.getElementById('pTot').textContent=total;
+  document.getElementById('progBar').style.width=`${((pos+1)/total)*100}%`;
+  document.getElementById('qNum').textContent=pos+1;
+  document.getElementById('qTxt').textContent=q.text;
+  const badge=document.getElementById('qBadge');
+  const bmap={single:['qbs','<i class="fas fa-circle-dot"></i> 單選題'],multi:['qbm','<i class="fas fa-square-check"></i> 多選題'],text:['qbt','<i class="fas fa-keyboard"></i> 填空題']};
+  badge.className=`qb ${bmap[q.type][0]}`;badge.innerHTML=bmap[q.type][1];
+  const container=document.getElementById('optsEl');container.innerHTML='';
+  if(q.type==='text'){
+    const inp=document.createElement('input');inp.className='tinp'+(ans?(ans.correct?' ook':' ong'):'');
+    inp.type='text';inp.placeholder='請輸入您的答案…';inp.value=ans?(ans.textVal||''):'';inp.disabled=!!ans;
+    if(!ans){inp.addEventListener('input',()=>{const nb=document.getElementById('nextBtn');const h=!!inp.value.trim();nb.disabled=!h;nb.classList.toggle('bdis',!h);});}
+    container.appendChild(inp);
+  } else {
+    const letters='ABCDEFG';
+    oOrd.forEach((origI,dispI)=>{
+      const item=document.createElement('div');item.className='opt'+(ans?' locked':'');
+      if(ans){
+        const selO=ans.selected,isSelO=selO.includes(origI),isOk=q.correct.includes(origI);
+        if(isSelO&&isOk)item.classList.add('ook');
+        else if(isSelO&&!isOk)item.classList.add('ong');
+        else if(!isSelO&&isOk&&D.settings.showFeedback)item.classList.add('ook');
+      } else {item.addEventListener('click',()=>selectOpt(pos,qOI,origI,oOrd));}
+      if(!ans&&q.type==='multi'&&S.tmpMulti[pos]&&S.tmpMulti[pos].includes(origI)){item.classList.add('sel');}
+      const mk=document.createElement('div');mk.className='om'+(q.type==='single'?' circ':'');
+      if(ans){
+        const selO=ans.selected,isSelO=selO.includes(origI),isOk=q.correct.includes(origI);
+        mk.textContent=isSelO?(isOk?'✓':'✗'):(isOk&&D.settings.showFeedback?'✓':letters[dispI]);
+        if(isSelO){mk.style.background=isOk?'var(--ok)':'var(--ng)';mk.style.color='#fff';mk.style.borderColor=isOk?'var(--ok)':'var(--ng)';}
+        else if(isOk&&D.settings.showFeedback){mk.style.background='var(--ok)';mk.style.color='#fff';mk.style.borderColor='var(--ok)';}
+      } else if(q.type==='multi'&&S.tmpMulti[pos]&&S.tmpMulti[pos].includes(origI)){
+        mk.textContent='✓';mk.style.background='var(--p)';mk.style.color='#fff';mk.style.borderColor='var(--p)';
+      } else {mk.textContent=letters[dispI];}
+      const tx=document.createElement('span');tx.className='ot';tx.textContent=q.options[origI];
+      item.appendChild(mk);item.appendChild(tx);container.appendChild(item);
+    });
+  }
+  const fb=document.getElementById('fbEl');
+  if(ans&&D.settings.showFeedback){
+    const ok=ans.correct;fb.className=`fb ${ok?'ook':'ong'}`;
+    let msg=ok?'🎉 回答正確！太棒了！':'😔 回答錯誤。';
+    if(!ok){msg+=q.type==='text'?`正確答案是：${(Array.isArray(q.correct)?q.correct:[q.correct])[0]}`:`正確答案是：${q.correct.map(i=>q.options[i]).join('、')}`;}
+    fb.textContent=msg;fb.classList.remove('hid');
+  } else {fb.classList.add('hid');}
+  const pb=document.getElementById('prevBtn');pb.disabled=pos===0;pb.classList.toggle('bdis',pos===0);
+  const nb=document.getElementById('nextBtn');nb.disabled=!ans;nb.classList.toggle('bdis',!ans);
+  const isLast=pos===total-1;
+  nb.innerHTML=isLast?'<i class="fas fa-flag-checkered"></i> 提交':'下一題 <i class="fas fa-arrow-right"></i>';
+}
+
+function selectOpt(pos,qOI,origI,oOrd){
+  const q=D.questions[qOI];if(S.answers[pos])return;
+  if(q.type==='single'){
+    S.answers[pos]={selected:[origI],correct:q.correct.includes(origI)};
+    renderQ();const nb=document.getElementById('nextBtn');nb.disabled=false;nb.classList.remove('bdis');
+  } else {
+    if(!S.tmpMulti[pos])S.tmpMulti[pos]=[];
+    const arr=S.tmpMulti[pos],idx=arr.indexOf(origI);
+    if(idx>=0)arr.splice(idx,1);else arr.push(origI);
+    document.querySelectorAll('#optsEl .opt').forEach((el,dispI)=>{
+      const oI=oOrd[dispI],sel=arr.includes(oI);
+      el.classList.toggle('sel',sel);const mk=el.querySelector('.om');
+      mk.textContent=sel?'✓':'ABCDEFG'[dispI];mk.style.background=sel?'var(--p)':'';mk.style.color=sel?'#fff':'';mk.style.borderColor=sel?'var(--p)':'';
+    });
+    const nb=document.getElementById('nextBtn');nb.disabled=arr.length===0;nb.classList.toggle('bdis',arr.length===0);
+  }
+}
+
+function commitAns(){
+  const pos=S.curQ,qOI=S.qOrd[pos],q=D.questions[qOI];
+  if(S.answers[pos])return true;
+  if(q.type==='multi'){
+    const arr=S.tmpMulti[pos]||[];
+    if(arr.length===0){toast('請至少選擇一個選項','ng');return false;}
+    const correct=[...arr].sort().toString()===[...q.correct].sort().toString();
+    S.answers[pos]={selected:arr,correct};renderQ();
+    const nb=document.getElementById('nextBtn');nb.disabled=false;nb.classList.remove('bdis');return false;
+  }
+  if(q.type==='text'){
+    const val=document.querySelector('.tinp')?.value?.trim();
+    if(!val){toast('請輸入答案','ng');return false;}
+    const accepted=Array.isArray(q.correct)?q.correct:[q.correct];
+    const correct=accepted.some(a=>a.toString().toLowerCase()===val.toLowerCase());
+    S.answers[pos]={textVal:val,selected:[],correct};renderQ();
+    const nb=document.getElementById('nextBtn');nb.disabled=false;nb.classList.remove('bdis');return false;
+  }
+  return true;
+}
+
+function goNext(){
+  const pos=S.curQ,total=S.qOrd.length;
+  if(!S.answers[pos]){const ok=commitAns();if(!ok)return;}
+  if(pos<total-1){S.curQ++;renderQ();}else{finishQuiz();}
+}
+function goPrev(){if(S.curQ>0){S.curQ--;renderQ();}}
+
+function finishQuiz(){
+  const total=S.qOrd.length;
+  const correct=Object.values(S.answers).filter(a=>a.correct).length;
+  const accuracy=Math.round((correct/total)*100);
+  D.records.unshift({time:new Date().toLocaleString(),total,correct,accuracy,registered:false});
+  saveD();
+  syncToSheet({type:'record',time:D.records[0].time,total,correct,accuracy,registered:false});
+  if(correct===total){
+    renderRegPage();showPage('registerPage');
+  } else {
+    const wl=document.getElementById('wrongList');
+    const wrongs=[];
+    S.qOrd.forEach((qOI,pos)=>{
+      if(!S.answers[pos]?.correct){
+        const q=D.questions[qOI],ans=S.answers[pos];
+        let ua='（未作答）';
+        if(ans){ua=q.type==='text'?(ans.textVal||'—'):(ans.selected.map(i=>q.options[i]).join('、')||'—');}
+        let ca=q.type==='text'?(Array.isArray(q.correct)?q.correct[0]:q.correct):q.correct.map(i=>q.options[i]).join('、');
+        wrongs.push({num:pos+1,text:q.text,ua,ca});
+      }
+    });
+    wl.innerHTML=wrongs.map(w=>`<div class="wi"><span>Q${w.num}</span><span style="flex:1"><div>${w.text}</div><div style="margin-top:3px;font-size:12px">您的：<span style="color:var(--ng)">${w.ua}</span> ／ 正確：<span style="color:var(--ok)">${w.ca}</span></div></span></div>`).join('');
+    showPage('failPage');
+  }
+}
+
+// ===== REGISTER =====
+function renderRegPage(){
+  const classes=D.settings.classes.split(',').map(c=>c.trim()).filter(Boolean);
+  const cb=document.getElementById('clsBtns');cb.innerHTML='';
+  classes.forEach(cls=>{
+    const b=document.createElement('button');b.className='cb';b.textContent=cls;
+    b.addEventListener('click',()=>{document.querySelectorAll('.cb').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');document.getElementById('regClass').value=cls;});
+    cb.appendChild(b);
+  });
+  document.getElementById('regClass').value='';document.getElementById('regName').value='';
+}
+function submitReg(){
+  const cls=document.getElementById('regClass').value.trim();
+  const name=document.getElementById('regName').value.trim();
+  if(!cls){toast('請選擇或輸入班級','ng');return;}
+  if(!name){toast('請輸入姓名','ng');return;}
+  D.pool.push({name,cls,time:new Date().toLocaleString()});
+  if(D.records.length>0)D.records[0].registered=true;
+  saveD();
+  const entry=D.pool[D.pool.length-1];
+  syncToSheet({type:'pool',name:entry.name,cls:entry.cls,time:entry.time});
+  document.getElementById('waitName').textContent=name;
+  document.getElementById('waitCls').textContent=cls;
+  confetti();toast(`${name} 已成功登錄抽獎名單！`,'ok');
+  showPage('waitPage');renderHome();
+}
+
+// ===== EVENTS =====
+document.addEventListener('DOMContentLoaded',()=>{
+  renderHome();
+  document.getElementById('helpBtn').addEventListener('click',()=>document.getElementById('helpModal').classList.add('open'));
+  document.getElementById('closeHelpBtn').addEventListener('click',()=>document.getElementById('helpModal').classList.remove('open'));
+  document.getElementById('helpModal').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('helpModal').classList.remove('open');});
+  document.getElementById('startQuizBtn').addEventListener('click',startQuiz);
+  document.getElementById('nextBtn').addEventListener('click',goNext);
+  document.getElementById('prevBtn').addEventListener('click',goPrev);
+  document.getElementById('submitRegBtn').addEventListener('click',submitReg);
+  document.getElementById('regBackBtn').addEventListener('click',startQuiz);
+  document.getElementById('waitHomeBtn').addEventListener('click',()=>{renderHome();showPage('homePage');});
+  document.getElementById('retryBtn').addEventListener('click',startQuiz);
+  document.getElementById('failHomeBtn').addEventListener('click',()=>{renderHome();showPage('homePage');});
+});
+</script>
+</body>
+</html>
